@@ -1,11 +1,32 @@
 import fastify from "fastify";
+import { MongoClient, ServerApiVersion } from "mongodb";
+
+const uri = "mongodb://localhost:27017";
+const client = new MongoClient(uri, {
+  serverApi: {
+    version: ServerApiVersion.v1,
+    strict: true,
+    deprecationErrors: true,
+  },
+});
 
 const app = fastify();
 
-let users: string[] = [];
+interface IUser {
+  name: string;
+}
+
 async function run() {
+  // MongoDB
+  await client.connect();
+  const db = client.db("aulinha");
+  const usersCollection = db.collection<IUser>("users");
+
+  // Fastify
   app.get("/users", async () => {
-    return { users };
+    const allUsers = await usersCollection.find().toArray();
+
+    return { allUsers };
   });
 
   // /add_user?username=PEDRO
@@ -14,8 +35,15 @@ async function run() {
 
     const upperUsername = username.toUpperCase();
 
-    if (users.includes(upperUsername)) return { ok: false };
-    users.push(upperUsername);
+    const userWithSameUsername = await usersCollection.findOne({
+      name: upperUsername,
+    });
+
+    if (userWithSameUsername) return { ok: false };
+
+    await usersCollection.insertOne({
+      name: upperUsername,
+    });
 
     return { ok: true };
   });
