@@ -1,5 +1,6 @@
 import fastify from "fastify";
 import { MongoClient, ServerApiVersion } from "mongodb";
+import FastifyCors from "@fastify/cors";
 
 const uri = "mongodb://localhost:27017";
 const client = new MongoClient(uri, {
@@ -11,6 +12,7 @@ const client = new MongoClient(uri, {
 });
 
 const app = fastify();
+app.register(FastifyCors);
 
 interface IUser {
   name: string;
