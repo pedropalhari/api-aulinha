@@ -9,6 +9,12 @@ async function run() {
     };
   });
 
+  app.get("/ping", async () => {
+    return {
+      txt: "pong",
+    };
+  });
+
   app.listen({
     port: 3040,
     host: "0.0.0.0",
