@@ -11,6 +11,7 @@ async function run() {
 
   app.listen({
     port: 3040,
+    host: "0.0.0.0",
   });
 
   console.log(`Server running on http://localhost:3040!`);
