@@ -50,6 +50,24 @@ async function run() {
     return { ok: true };
   });
 
+  app.post<{ Body: { username: string } }>("/add_user", async (req) => {
+    const { username } = req.body;
+
+    const upperUsername = username.toUpperCase();
+
+    const userWithSameUsername = await usersCollection.findOne({
+      name: upperUsername,
+    });
+
+    if (userWithSameUsername) return { ok: false };
+
+    await usersCollection.insertOne({
+      name: upperUsername,
+    });
+
+    return { ok: true };
+  });
+
   app.listen({
     port: 3040,
     host: "0.0.0.0",
