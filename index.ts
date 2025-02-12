@@ -1,5 +1,5 @@
 import fastify from "fastify";
-import { MongoClient, ServerApiVersion } from "mongodb";
+import { MongoClient, ObjectId, ServerApiVersion } from "mongodb";
 import FastifyCors from "@fastify/cors";
 
 const uri = "mongodb://localhost:27017";
@@ -64,6 +64,14 @@ async function run() {
     await usersCollection.insertOne({
       name: upperUsername,
     });
+
+    return { ok: true };
+  });
+
+  app.delete<{ Body: { userId: string } }>("/user", async (req) => {
+    const { userId } = req.body;
+
+    await usersCollection.deleteOne({ _id: new ObjectId(userId) });
 
     return { ok: true };
   });
